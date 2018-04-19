@@ -2,34 +2,63 @@ import os
 from StringIO import StringIO
 
 
-def read(filename, field_separator=',', null_as=""):
+def read(filename, field_separator=',', null_as="", newline="\n", quote=None):
     size = os.path.getsize(filename)
     with open(filename, 'rb') as f:
         data = memoryview(f.read())
-    return parse(data, size, field_separator=field_separator, null_as=null_as)
+    return parse(data, size, field_separator=field_separator, null_as=null_as, newline=newline, quote=quote)
 
 
-def parse(data, size, field_separator=',', null_as="", newline="\n"):
+def parse(data, size, field_separator=',', null_as="", newline="\n", quote=None):
     parsed_data = []
     row_data = []
     field_data = bytearray()
     i = 0
+    in_quotes = False
+    escaped = False
     while i < size:
         byte = data[i]
-        if byte == field_separator:
-            row_data.append(field_data)
-            field_data = bytearray()
+        if byte == "\\":
+            if escaped:
+                escaped = False
+                field_data.append(byte)
+            else:
+                escaped = True
+        elif quote and byte == quote:
+            if escaped:
+                field_data.append(byte)
+                escaped = False
+            elif in_quotes:
+                in_quotes = False
+            else:
+                in_quotes = True
+        elif byte == field_separator:
+            if escaped:
+                field_data.append(byte)
+                escaped = False
+            elif in_quotes:
+                field_data.append(byte)
+            else:
+                row_data.append(field_data)
+                field_data = bytearray()
         elif byte == newline:
-            row_data.append(field_data)
-            field_data = bytearray()
-            parsed_data.append(tuple(row_data))
-            row_data = []
+            if escaped:
+                field_data.append(byte)
+                escaped = False
+            elif in_quotes:
+                field_data.append(byte)
+            else:
+                row_data.append(field_data)
+                field_data = bytearray()
+                parsed_data.append(tuple(row_data))
+                row_data = []
         else:
             field_data.append(byte)
         i = i + 1
     row_data.append(field_data)
     parsed_data.append(tuple(row_data))
     return parsed_data
+
 
 # Ensure we are still in bounds
 # If we are "escaped"
@@ -41,4 +70,3 @@ def parse(data, size, field_separator=',', null_as="", newline="\n"):
     # Add it to row data
 # Check if we are a newline character
 
-# What about quoted fields?
