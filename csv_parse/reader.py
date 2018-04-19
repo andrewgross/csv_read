@@ -40,7 +40,7 @@ def parse(data, size, field_separator=',', null_as="", newline="\n", quote=None)
                 field_data.append(byte)
             else:
                 row_data.append(field_data)
-                field_data = bytearray()
+                field_data = clear_field_data()
         elif byte == newline:
             if escaped:
                 field_data.append(byte)
@@ -48,17 +48,26 @@ def parse(data, size, field_separator=',', null_as="", newline="\n", quote=None)
             elif in_quotes:
                 field_data.append(byte)
             else:
-                row_data.append(field_data)
-                field_data = bytearray()
-                parsed_data.append(tuple(row_data))
-                row_data = []
+                field_data, row_data, parsed_data = finish_row(field_data, row_data, parsed_data)
         else:
             field_data.append(byte)
         i = i + 1
-    row_data.append(field_data)
-    parsed_data.append(tuple(row_data))
+    if not byte == newline:
+        # Dont record trailing newline
+        row_data.append(field_data)
+        parsed_data.append(tuple(row_data))
     return parsed_data
 
+
+def clear_field_data():
+    return bytearray()
+
+def finish_row(field_data, row_data, parsed_data):
+    row_data.append(field_data)
+    parsed_data.append(tuple(row_data))
+    field_data = clear_field_data()
+    row_data = []
+    return field_data, row_data, parsed_data
 
 # Ensure we are still in bounds
 # If we are "escaped"

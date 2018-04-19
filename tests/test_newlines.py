@@ -1,4 +1,5 @@
-from csv_parse.reader import parse
+from tests.helpers import get_file_path
+from csv_parse.reader import parse, read
 
 
 def test_simple_multiline_parse():
@@ -16,8 +17,6 @@ def test_simple_quoted_multiline_parse():
 
 
 def test_simple_escaped_multiline_parse():
-    data = memoryview('''fo\
-o,bar\nbaz,bat''')
-    size = len(data)
-    result = parse(data, size)
+    path = get_file_path("escape_newline")
+    result = read(path)
     assert result == [("fo\no", "bar"), ("baz", "bat")]
