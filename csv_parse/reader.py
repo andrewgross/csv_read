@@ -68,14 +68,3 @@ def finish_row(field_data, row_data, parsed_data):
     field_data = clear_field_data()
     row_data = []
     return field_data, row_data, parsed_data
-
-# Ensure we are still in bounds
-# If we are "escaped"
-    # Unset "escaped", append and move on
-
-
-# Check if we are a field delimiter
-    # Take our current buffer, finish it
-    # Add it to row data
-# Check if we are a newline character
-
