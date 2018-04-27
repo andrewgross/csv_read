@@ -1,5 +1,4 @@
 import os
-from StringIO import StringIO
 
 
 def read(filename, field_separator=',', null_as="", newline="\n", quote=None):
@@ -61,6 +60,7 @@ def parse(data, size, field_separator=',', null_as="", newline="\n", quote=None)
 
 def clear_field_data():
     return bytearray()
+
 
 def finish_row(field_data, row_data, parsed_data):
     row_data.append(field_data)

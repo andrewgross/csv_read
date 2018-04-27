@@ -6,5 +6,3 @@ def test_simple_parse():
     size = len(data)
     result = parse(data, size)
     assert result == [("foo", "bar")]
-
-

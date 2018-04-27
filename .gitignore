@@ -1,5 +1,16 @@
 .coverage
 *_cache/*
+.pytest_cache/*
+tests/__pycache__
+.cache
 *.pyc
-*cache
+*.swp
+.coverage
+.DS_Store
+dist/*
+.build.log
+*.egg-info/*
+build/*
 htmlcov/*
+*~
+*#
