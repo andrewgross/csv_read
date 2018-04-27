@@ -26,6 +26,7 @@ setup(
     version=version,
     description='A simple state-machine based CSV parser.',
     long_description=readme + '\n\n' + changelog,
+    long_description_content_type="text/markdown",
     author='Andrew Gross',
     author_email='andrew.w.gross@gmail.com',
     url='https://github.com/andrewgross/csv_read',
