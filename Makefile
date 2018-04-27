@@ -17,6 +17,8 @@ test:
 clean:
 	@rm -rf .cache
 	@rm -rf build/
+	@rm -f .build.log
+	@rm -rf .pytest_cache/
 	@echo "Removing garbage..."
 	@find . -name '*.pyc' -delete
 	@find . -name '*.so' -delete
@@ -43,9 +45,9 @@ install_deps:
 publish: clean tag
 	@if [ -e "$$HOME/.pypirc" ]; then \
 		echo "Uploading to '$(CUSTOM_PIP_INDEX)'"; \
-		python setup.py sdist upload -r "$(CUSTOM_PIP_INDEX)"; \
-		python setup.py bdist_wheel upload -r "$(CUSTOM_PIP_INDEX)"; \
-		python3 setup.py bdist_wheel upload -r "$(CUSTOM_PIP_INDEX)"; \
+		python setup.py sdist bdist_wheel; \
+		python3 setup.py bdist_wheel; \
+		twine upload dist/*; \
 	else \
 		echo "You should create a file called '.pypirc' under your home dir.\n"; \
 		echo "That's the right place to configure 'pypi' repos.\n"; \
